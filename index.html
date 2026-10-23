@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>iSpy Game</title>
+<style>
+body{margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh}
+canvas{border:2px solid #0ff}
+</style>
+</head>
+<body>
+<canvas id="c" width="800" height="400"></canvas>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d');
+let p={x:100,y:300,w:30,h:30,dy:0,g:false},e={x:600,y:150,r:50,c:'#fff',s:'safe',t:0},o=[],s=0,go=false;
+document.onkeydown=e=>{if(e.code=='Space'){if(p.g&&!go){p.dy=-12;p.g=false}else if(go){p.y=300;p.dy=0;o=[];s=0;go=false}}};
+c.onclick=()=>{if(p.g&&!go){p.dy=-12;p.g=false}else if(go){p.y=300;p.dy=0;o=[];s=0;go=false}};
+setInterval(()=>{
+if(!go){
+p.dy+=0.6;p.y+=p.dy;
+if(p.y>=350){p.y=350;p.dy=0;p.g=true}
+e.t++;
+if(e.s=='safe'&&e.t>180){e.s='warning';e.c='#fa0'}
+else if(e.s=='warning'&&e.t>210){e.s='danger';e.c='#f00';o.push({x:800,y:320,w:40,h:30})}
+else if(e.s=='danger'&&e.t>270){e.s='safe';e.c='#fff';e.t=0}
+for(let i=o.length-1;i>=0;i--){
+o[i].x-=6;
+if(p.x<o[i].x+o[i].w&&p.x+p.w>o[i].x&&p.y<o[i].y+o[i].h&&p.y+p.h>o[i].y)go=true;
+if(o[i].x<-50){o.splice(i,1);s++}
+}}
+x.fillStyle='#111';x.fillRect(0,0,800,400);
+x.fillStyle='#333';x.fillRect(0,350,800,50);
+x.beginPath();x.arc(e.x,e.y,e.r,0,7);x.fillStyle=e.c;x.fill();
+x.fillStyle='#000';x.beginPath();x.arc(e.x-10,e.y,15,0,7);x.fill();
+x.fillStyle='#0ff';x.fillRect(p.x,p.y,p.w,p.h);
+x.fillStyle='#f04';o.forEach(o=>x.fillRect(o.x,o.y,o.w,o.h));
+x.fillStyle='#fff';x.font='20px Arial';x.fillText('Счет: '+s,10,30);
+if(go){x.fillStyle='rgba(0,0,0,0.7)';x.fillRect(0,0,800,400);x.fillStyle='#f00';x.font='40px Arial';x.textAlign='center';x.fillText('GAME OVER',400,200);x.fillStyle='#fff';x.font='20px Arial';x.fillText('Пробел для рестарта',400,250)}
+},16);
+</script>
+</body>
+</html>
